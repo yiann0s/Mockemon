@@ -1,7 +1,11 @@
 package com.udemy.yiannos.mockemon
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.widget.Toast
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,6 +28,36 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
+    var ACCESSLOCATION=123
+
+    fun checkPermission(){
+        if(Build.VERSION.SDK_INT>=23){
+            if (ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)
+                !=PackageManager.PERMISSION_GRANTED){
+                requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),ACCESSLOCATION)
+                return
+            }
+        }
+        GetUserLocation()
+    }
+
+    fun GetUserLocation(){
+        Toast.makeText(this,"User location access on",Toast.LENGTH_SHORT).show()
+        //TODO: implement code
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when(requestCode){
+            ACCESSLOCATION->{
+                if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    GetUserLocation()
+                } else {
+                    Toast.makeText(this,"We cannot access your location",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
